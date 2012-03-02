@@ -1,0 +1,17 @@
+//
+// Prefix header for all source files of the 'whois' target in the 'whois' project
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_4_0
+#warning "This project uses features only available in iOS SDK 4.0 and later."
+#endif
+
+#ifdef __OBJC__
+    #import <UIKit/UIKit.h>
+    #import <Foundation/Foundation.h>
+#endif
+
+
+#define ALog( s, ... ) printf( "%s<%p %s:(%d)>\n\tSAY: [ %s ]\n\n",__PRETTY_FUNCTION__, [self description] , [[[NSString stringWithUTF8String:__FILE__] lastPathComponent]UTF8String], __LINE__, [[NSString stringWithFormat:(s), ##__VA_ARGS__]UTF8String] )
