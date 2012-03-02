@@ -7,13 +7,13 @@
 //
 
 #import "MBProgressHUD.h"
-#import "api.h"
+#import "MIRequestManager+API.h"
+#import "dataSharer.h"
 #import "MobClick.h"
 
-@interface WIMainViewController : UIViewController <UISearchBarDelegate, MBProgressHUDDelegate, apiProtocol,UIAlertViewDelegate>
+@interface WIMainViewController : UIViewController <UISearchBarDelegate, MBProgressHUDDelegate, MIRequestManagerDelegate,UIAlertViewDelegate>
 
 //@property (retain, nonatomic) UIImageView *imageView;
-@property (retain, nonatomic) API *api;
 @property (retain, nonatomic) UISearchBar *searchBar;
 @property (retain, nonatomic) UITextView *resultView;
 @property (retain, nonatomic) UIWebView *webView;
@@ -25,7 +25,7 @@
 - (IBAction) taped:(UIGestureRecognizer *) sender;
 - (IBAction)showInfo:(id)sender;
 - (void)doSearch;
-- (void)requestFinished:(id)body;
-- (void)requestFailed:(NSString *)errorMsg;
+- (void)refreshView:(NSData *)body;
+- (void)refreshViewWithError:(NSError *)error;
 
 @end

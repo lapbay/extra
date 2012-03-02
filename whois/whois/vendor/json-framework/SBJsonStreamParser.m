@@ -58,11 +58,7 @@
 }
 
 - (void)dealloc {
-	self.error = nil;
     self.state = nil;
-	[stateStack release];
-	[tokeniser release];
-	[super dealloc];
 }
 
 #pragma mark Methods
@@ -168,8 +164,7 @@
 }
 
 - (SBJsonStreamParserStatus)parse:(NSData *)data_ {
-    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    @try {
+    @autoreleasepool {
         [tokeniser appendData:data_];
         
         for (;;) {
@@ -254,10 +249,6 @@
             }
         }
         return SBJsonStreamParserComplete;
-
-    }
-    @finally {
-        [pool drain];
     }
 }
 

@@ -13,7 +13,7 @@
 @end
 
 @implementation WIMainViewController
-@synthesize imageView, api, searchBar, resultView, webView, infoButton, hud, pureText;
+@synthesize imageView, searchBar, resultView, webView, infoButton, hud, pureText;
 
 - (void)viewDidLoad
 {
@@ -25,8 +25,6 @@
     [self.view addSubview:self.imageView];
     NSDictionary *APIArgs = [[[[dataSharer sharedManager].storage _read] objectForKey: @"settings"] objectForKey: @"api"];
     self.pureText = [[APIArgs objectForKey:@"text"] boolValue];
-    api = [[API alloc] init];
-    [api setDelegate:self];
     self.searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
     self.searchBar.delegate = self;
     self.searchBar.showsCancelButton = YES;
@@ -130,9 +128,10 @@
     self.hud.labelText = @"正在查询...";
     [self.hud show:YES];
     if (![self.searchBar.text isEqualToString:@""]) {
-        NSDictionary *toSearch = [NSDictionary dictionaryWithObjectsAndKeys:self.searchBar.text, @"domain", nil];
-        [api searchDomainAsync:toSearch];
-        [MobClick event:@"domain" label:self.searchBar.text];
+        MIRequestManager *requestManager = [MIRequestManager requestManager];
+        requestManager.delegate = self;
+        [requestManager whoisAPI:self.searchBar.text];
+        [MobClick event:@"domain" label:[self.searchBar.text lowercaseString]];
     }
     /*NSMutableDictionary *result = [api searchDomain:toSearch];
     if (self.pureText) {
@@ -146,10 +145,49 @@
     //self.resultView.text = @"body";
 }
 
-- (void)requestFinished:(id)body{
+- (void)connection:(NSURLConnection *) connection didFailWithError:(NSError *)error{
+    NSLog(@"Connection failed! Error - %@ %@",[error localizedDescription],[[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]);
+    [self performSelectorOnMainThread:@selector(refreshViewWithError:) withObject:error waitUntilDone:[NSThread isMainThread]];
+}
+
+- (void)refreshViewWithError:(NSError *)error {
+    NSString *msg;
+    UIAlertView *alert;
+    NSLog(@"%@",[error localizedDescription]);
+    if ([[error localizedDescription] isEqualToString:@"The Internet connection appears to be offline."]) {
+        msg = @"网络连接错误，请检查网络设置是否正确";
+        alert = [[UIAlertView alloc]initWithTitle:@"网络错误"
+                                          message:msg
+                                         delegate:self
+                                cancelButtonTitle:@"确定"
+                                otherButtonTitles:nil,nil];
+    }else if ([[error localizedDescription] isEqualToString:@"Could not connect to the server."]) {
+        msg = @"无法连接到服务器";
+        alert = [[UIAlertView alloc]initWithTitle:@"网络错误"
+                                          message:msg
+                                         delegate:self
+                                cancelButtonTitle:@"取消"
+                                otherButtonTitles:@"重试",nil];
+    }else {
+        msg = @"网络连接超时";
+        alert = [[UIAlertView alloc]initWithTitle:@"网络错误"
+                                          message:msg
+                                         delegate:self
+                                cancelButtonTitle:@"取消"
+                                otherButtonTitles:@"重试",nil];
+    }
+    [alert show];
+    [self.hud hide:YES];
+}
+
+- (void)connectionDidFinishLoading:(NSMutableDictionary *) response {
+    [self performSelectorOnMainThread:@selector(refreshView:) withObject:[response objectForKey:@"data"] waitUntilDone:[NSThread isMainThread]];
+}
+
+- (void)refreshView:(NSData *)body {
     self.webView.alpha = 0.6;
     if (self.pureText) {
-        self.resultView.text = (NSString *)body;
+        self.resultView.text = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
     }else {
         //NSString *html = [result objectForKey:@"body"];
         NSString *path = [[NSBundle mainBundle] resourcePath];
@@ -159,30 +197,8 @@
     [self.hud hide:YES];
 }
 
-- (void)requestFailed:(NSString *)errorMsg{
-    [self.hud hide:YES];
-    NSString *msg;
-    UIAlertView *alert;
-    if (errorMsg == @"The request timed out") {
-        msg = @"网络连接超时";
-        alert = [[UIAlertView alloc]initWithTitle:@"网络错误"
-                                                       message:msg
-                                                      delegate:self
-                                             cancelButtonTitle:@"重试"
-                                             otherButtonTitles:@"取消",nil];
-    }else {
-        msg = @"网络连接错误，请检查网络设置是否正确";
-        alert = [[UIAlertView alloc]initWithTitle:@"网络错误"
-                                                       message:msg
-                                                      delegate:self
-                                             cancelButtonTitle:@"确定"
-                                             otherButtonTitles:nil,nil];
-    }
-    [alert show];
-}
-
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 0) {
+    if (buttonIndex == 1) {
         [self doSearch];
     }
 }

@@ -25,7 +25,7 @@
     self.window.rootViewController = self.mainViewController;
     [self.window makeKeyAndVisible];
     [MobClick start:@"4f4a2f07527015051a000009" reportPolicy:REALTIME channelId:nil];
-    [MobClick setLogEnabled:YES];
+    //[MobClick setLogEnabled:YES];
     return YES;
 }
 
