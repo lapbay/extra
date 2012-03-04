@@ -8,11 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "MIRequest.h"
+#import "MICache.h"
 
 @protocol MIRequestManagerDelegate <NSObject>
 
 @required
-- (void)connectionDidFinishLoading:(NSMutableDictionary *) response;
+- (void)connectionDidFinishLoading:(NSMutableDictionary *) response withIndex: (NSNumber *) index;
 
 @optional
 - (void)connection:(NSURLConnection *) connection didFailWithError:(NSError *)error;
@@ -24,12 +25,15 @@
 + (id)allocWithZone:(NSZone *)zone;
 - (id)copyWithZone:(NSZone *)zone;
 - (id) jsonToObject:(NSData *) json;
-- (MIRequest *) buildSampleAPI;
-- (void) asyncAPI;
-- (NSData *) syncAPI;
+- (BOOL) checkCache:(NSString *)key;
+- (BOOL) cacheResponse:(NSString *)key withIndex:(NSNumber *)index;
+- (MIRequest *) miSampleAPI;
+- (void) miAsyncAPI;
+- (NSData *) miSyncAPI;
 
-@property (assign, nonatomic) id <MIRequestManagerDelegate> delegate;
+@property (strong, nonatomic) id <MIRequestManagerDelegate> delegate;
 //@property (strong, nonatomic) id delegate;
 @property (assign, nonatomic) BOOL json;
+@property (assign, nonatomic) BOOL useCache;
 
 @end

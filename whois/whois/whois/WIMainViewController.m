@@ -130,6 +130,8 @@
     if (![self.searchBar.text isEqualToString:@""]) {
         MIRequestManager *requestManager = [MIRequestManager requestManager];
         requestManager.delegate = self;
+        //NSString *imageURL = @"http://local.pasent.com/images/milan/5f3b7dbf3ebfc364a8dd5d6092639622.jpg";
+        //[requestManager imageLoader:imageURL withIndex:[NSNumber numberWithInt:1234]];
         [requestManager whoisAPI:self.searchBar.text];
         [MobClick event:@"domain" label:[self.searchBar.text lowercaseString]];
     }
@@ -143,6 +145,26 @@
         [self.webView loadData:[result objectForKey:@"body"] MIMEType:@"text/html" textEncodingName:@"UTF-8" baseURL:baseURL];
     }*/
     //self.resultView.text = @"body";
+}
+
+- (void)refreshView:(NSData *)body {
+    self.webView.alpha = 0.6;
+    if (self.pureText) {
+        self.resultView.text = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
+    }else {
+        //NSString *html = [result objectForKey:@"body"];
+        NSString *path = [[NSBundle mainBundle] resourcePath];
+        NSURL *baseURL = [NSURL fileURLWithPath:path];
+        [self.webView loadData:(NSData *)body MIMEType:@"text/html" textEncodingName:@"UTF-8" baseURL:baseURL];
+        //[self.webView loadData:(NSData *)body MIMEType:@"image/jpg" textEncodingName:@"UTF-8" baseURL:baseURL];
+    }
+    [self.hud hide:YES];
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    if (buttonIndex == 1) {
+        [self doSearch];
+    }
 }
 
 - (void)connection:(NSURLConnection *) connection didFailWithError:(NSError *)error{
@@ -180,28 +202,8 @@
     [self.hud hide:YES];
 }
 
-- (void)connectionDidFinishLoading:(NSMutableDictionary *) response {
+- (void)connectionDidFinishLoading:(NSMutableDictionary *) response withIndex: (NSNumber *) index{
     [self performSelectorOnMainThread:@selector(refreshView:) withObject:[response objectForKey:@"data"] waitUntilDone:[NSThread isMainThread]];
 }
-
-- (void)refreshView:(NSData *)body {
-    self.webView.alpha = 0.6;
-    if (self.pureText) {
-        self.resultView.text = [[NSString alloc] initWithData:body encoding:NSUTF8StringEncoding];
-    }else {
-        //NSString *html = [result objectForKey:@"body"];
-        NSString *path = [[NSBundle mainBundle] resourcePath];
-        NSURL *baseURL = [NSURL fileURLWithPath:path];
-        [self.webView loadData:(NSData *)body MIMEType:@"text/html" textEncodingName:@"UTF-8" baseURL:baseURL];
-    }
-    [self.hud hide:YES];
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
-    if (buttonIndex == 1) {
-        [self doSearch];
-    }
-}
-
 
 @end

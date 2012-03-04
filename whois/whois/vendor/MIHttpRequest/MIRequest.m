@@ -9,7 +9,7 @@
 #import "MIRequest.h"
 
 @implementation MIRequest
-@synthesize delegate = _delegate, _requester, timeout, json, receivedData, _hasDone, _isExecuting, method, url, getURL, getParams, postStrings, postDatas, postBody, headers;
+@synthesize delegate = _delegate, _requester, timeout, index, useCache, json, receivedData, _hasDone, _isExecuting, method, url, getURL, getParams, postStrings, postDatas, postBody, headers;
 
 - (id)init
 {
@@ -40,7 +40,6 @@
     }
     //[runLoop run];
     NSDate *dateLimit = [[NSDate date] addTimeInterval:0.5];
-    //NSDate *future = [NSDate distantFuture];
 
     while (![self isCancelled]){
         //NSLog(@"in start %@",[NSThread currentThread]);
@@ -76,9 +75,6 @@
 }
 
 - (NSMutableURLRequest *) buildRequest {
-    if (self.delegate == nil) {
-        self.delegate = self;
-    }
     if (self.method == @"POST") {
         if (self.postDatas != nil) {
             [self buildMultipartFormDataPostBody];
@@ -86,14 +82,12 @@
             [self buildPostBody];
         }
     }
-    [self buildURL];
+    //[self buildURL];
     NSURL *theURL = [[NSURL alloc]initWithString:self.url];
     NSMutableURLRequest *theRequest = [NSMutableURLRequest requestWithURL:theURL cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:self.timeout];
     [theRequest setHTTPMethod:self.method];
     [theRequest setHTTPBody:self.postBody];
     [theRequest setTimeoutInterval:self.timeout]; //does not work according to web search
-    [self.headers setObject:@"1.0" forKey:@"APIVersion"];
-    [self.headers setObject:@"gzip,deflate" forKey:@"Accept-Encoding"];
     [theRequest setAllHTTPHeaderFields:self.headers];
     //[theRequest setValue:@"1.0" forHTTPHeaderField:@"APIVersion"];
     return theRequest;
@@ -149,8 +143,13 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    //NSLog(@"%@",[[connection currentRequest] ]);
-    if ([self.delegate respondsToSelector:@selector(connectionDidFinishLoading:)]) {
+    MICache *cache = [MICache currentCache];
+    NSString *hash = [NSString stringWithFormat: @"%i",[self.url hash]];
+    if (self.useCache && ![cache hasCacheForKey:hash]) {
+        NSLog(@"micaching %i",[self.receivedData length]);
+        [cache setData:self.receivedData forKey:hash];
+    }
+    if ([self.delegate respondsToSelector:@selector(connectionDidFinishLoading:withIndex:)]) {
         NSDictionary *response;
         if (self.json) {
             response = [self.receivedData JSONValue];
@@ -159,7 +158,7 @@
         }
         [self cancel];
         //[self.delegate performSelectorOnMainThread:@selector(connectionDidFinishLoading:) withObject:response waitUntilDone:NO];
-        [self.delegate performSelector:@selector(connectionDidFinishLoading:) withObject:response];
+        [self.delegate performSelector:@selector(connectionDidFinishLoading:withIndex:) withObject:response withObject:self.index];
     }
 }
 
@@ -183,6 +182,11 @@
     NSString *body = [array componentsJoinedByString:@"&"];
     self.postBody = [NSMutableData dataWithData: [body dataUsingEncoding:NSUTF8StringEncoding]];
     return body;
+}
+
+- (void) setGetParams:(NSMutableDictionary *)params {
+    getParams = params;
+    [self buildURL];
 }
 
 - (NSString *) buildURL{

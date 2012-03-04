@@ -8,11 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "SBJson.h"
+#import "MICache.h"
 
 @protocol MIRequestDelegate <NSObject>
 
 @required
-- (void)connectionDidFinishLoading:(NSMutableDictionary *) response;
+- (void)connectionDidFinishLoading:(NSMutableDictionary *) response withIndex: (NSNumber *)index;
 
 @optional
 - (void)connection:(NSURLConnection *) connection didFailWithError:(NSError *)error;
@@ -20,12 +21,14 @@
 @end
 
 
-@interface MIRequest : NSOperation <MIRequestDelegate, NSURLConnectionDelegate, NSURLConnectionDataDelegate>
+@interface MIRequest : NSOperation <NSURLConnectionDelegate, NSURLConnectionDataDelegate>
 
 @property (strong, nonatomic) id <MIRequestDelegate> delegate;
 @property (assign, nonatomic) BOOL _isExecuting;
 @property (assign, nonatomic) BOOL _hasDone;
 @property (assign, nonatomic) BOOL json;
+@property (assign, nonatomic) BOOL useCache;
+@property (strong, nonatomic) NSNumber *index;
 @property (assign, nonatomic) NSTimeInterval timeout;
 @property (strong, nonatomic) NSMutableData *receivedData;
 @property (strong, nonatomic) NSString *url;

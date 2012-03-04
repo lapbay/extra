@@ -34,6 +34,7 @@
 		F17E422014F4F079004E6C2D /* storage.m in Sources */ = {isa = PBXBuildFile; fileRef = F17E420014F4F079004E6C2D /* storage.m */; };
 		F17E422914F4F1AE004E6C2D /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F17E422814F4F1AE004E6C2D /* CFNetwork.framework */; };
 		F17E423414F4F50E004E6C2D /* defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = F17E423314F4F50E004E6C2D /* defaults.plist */; };
+		F19BFA0415020819009C2B2C /* MICache.m in Sources */ = {isa = PBXBuildFile; fileRef = F19BFA0315020819009C2B2C /* MICache.m */; };
 		F19EE74F150113CC00B3C9AA /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F19EE74E150113CC00B3C9AA /* libz.1.2.5.dylib */; };
 		F1AC25E014FA69CA002CD8DD /* libMobClickLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1AC25DE14FA69CA002CD8DD /* libMobClickLibrary.a */; };
 		F1AC25EC14FB69D5002CD8DD /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = F1AC25EB14FB69D4002CD8DD /* MBProgressHUD.m */; };
@@ -99,6 +100,8 @@
 		F17E420014F4F079004E6C2D /* storage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = storage.m; sourceTree = "<group>"; };
 		F17E422814F4F1AE004E6C2D /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		F17E423314F4F50E004E6C2D /* defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = defaults.plist; sourceTree = "<group>"; };
+		F19BFA0215020819009C2B2C /* MICache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MICache.h; sourceTree = "<group>"; };
+		F19BFA0315020819009C2B2C /* MICache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MICache.m; sourceTree = "<group>"; };
 		F19EE74E150113CC00B3C9AA /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
 		F1AC25DE14FA69CA002CD8DD /* libMobClickLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libMobClickLibrary.a; sourceTree = "<group>"; };
 		F1AC25DF14FA69CA002CD8DD /* MobClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobClick.h; sourceTree = "<group>"; };
@@ -135,6 +138,8 @@
 		F143EBA11500966500CEBC69 /* MIHttpRequest */ = {
 			isa = PBXGroup;
 			children = (
+				F19BFA0215020819009C2B2C /* MICache.h */,
+				F19BFA0315020819009C2B2C /* MICache.m */,
 				F143EBA21500966500CEBC69 /* MIRequest.h */,
 				F143EBA31500966500CEBC69 /* MIRequest.m */,
 				F143EBA61500966500CEBC69 /* MIRequestManager.h */,
@@ -376,6 +381,7 @@
 				F143EBD31500991900CEBC69 /* SBJsonTokeniser.m in Sources */,
 				F143EBD41500991900CEBC69 /* SBJsonUTF8Stream.m in Sources */,
 				F143EBD51500991900CEBC69 /* SBJsonWriter.m in Sources */,
+				F19BFA0415020819009C2B2C /* MICache.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,7 +456,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "whois/whois-Prefix.pch";
 				INFOPLIST_FILE = "whois/whois-Info.plist";
@@ -468,7 +474,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "whois/whois-Prefix.pch";
 				INFOPLIST_FILE = "whois/whois-Info.plist";

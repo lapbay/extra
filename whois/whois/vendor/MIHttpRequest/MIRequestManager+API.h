@@ -9,14 +9,15 @@
 #import "MIRequestManager.h"
 #import "SBJson.h"
 
-@interface MIRequestManager (baseAPI)
+@interface MIRequestManager (sampleAPI)
 
+- (MIRequest *) buildSampleAPI;
 - (void) sampleAPI;
+- (void) imageLoader:(NSString *) imageURL withIndex: (NSNumber *)index;
 
 @end
 
 @interface MIRequestManager (appAPI)
-- (void) testAPI;
 - (MIRequest *) buildMyAPI: (NSString *)domain;
 - (void) whoisAPI: (NSString *)domain;
 
