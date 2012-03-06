@@ -10,82 +10,70 @@
 
 @implementation MIRequestManager (sampleAPI)
 
-- (MIRequest *) buildImageLoader:(NSString *)imageURL {    
-    MIRequest *request = [[MIRequest alloc] init];
-    request.delegate = self;
-    request.useCache = YES;
-    request.url = imageURL;
-    request.method = @"GET";
-    
-    request.headers = [NSDictionary dictionaryWithObjectsAndKeys:@"1.0", @"APIVersion", @"gzip,deflate", @"Accept-Encoding", nil];
-    request.getParams = [NSDictionary dictionaryWithObjectsAndKeys:@"true", @"test", nil];
-    //[request asyncRequest];
-    return request;
-}
-
-- (void) imageLoader:(NSString *) imageURL withIndex: (NSNumber *)index{
-    MIRequest *request = [self buildImageLoader:imageURL];
-    request.index = index;
-    if ([self checkCache:request.url]) {
-        [self cacheResponse:request.url withIndex:index];
-    }else {
-        [self addOperation:request];
-    }
-}
-
-- (MIRequest *) buildSampleAPI {
+- (void) sampleAPI:(NSString *) url withIndex: (NSString *)index withDelegate: (NSObject <MIRequestDelegate> *) delegate{
     NSString* docPath = [NSHomeDirectory() stringByAppendingPathComponent: @"Documents"]; 
     NSString* path = [NSString stringWithFormat: @"%@/%@", docPath, @"360.png"];
     NSDictionary *pic = [NSDictionary dictionaryWithObjectsAndKeys:@"data", @"key",@"sample.png",@"fileName",@"image/png",@"contentType",path,@"data", nil];
     
-    MIRequest *request = [[MIRequest alloc] init];
-    request.delegate = self;
-    request.useCache = self.useCache;
-    request.url = @"http://pasent.com/foo";
-    request.method = @"POST";
-    
-    request.headers = [NSDictionary dictionaryWithObjectsAndKeys:@"1.0", @"APIVersion", @"gzip,deflate", @"Accept-Encoding", nil];
-    request.getParams = [NSDictionary dictionaryWithObjectsAndKeys:@"true", @"text", @"中文", @"key", nil];
-    request.postStrings = [NSDictionary dictionaryWithObjectsAndKeys:@"google.com", @"domain", @"baidu.com", @"name", nil];
-    request.postDatas = [NSDictionary dictionaryWithObjectsAndKeys:pic, @"data", nil];
-    //[request asyncRequest];
-    return request;
-}
+    self.url = @"http://pasent.com/foo";
+    self.method = @"POST";
+    self.headers = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1.0", @"APIVersion", @"gzip,deflate", @"Accept-Encoding", nil];
+    self.getParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"true", @"text", @"中文", @"key", nil];
+    self.postStrings = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"google.com", @"domain", @"baidu.com", @"name", nil];
+    self.postDatas = [NSMutableDictionary dictionaryWithObjectsAndKeys:pic, @"data", nil];
+    self.timeout = 30.0;
 
-- (void) sampleAPI {
-    MIRequest *request = [self buildSampleAPI];
-    if (self.useCache && [self checkCache:request.url]) {
-        [self cacheResponse:request.url  withIndex:[NSNumber numberWithInt:0]];
-    }else {
-        [self addOperation:request];
-    }
+    NSMutableURLRequest *request = [self buildRequest];
+    [MIRequest sendAsynchronousRequest:request queue:self completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         if ([data length] > 0 && error == nil){
+             NSLog(@"in manager %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+             NSMutableDictionary *res = [NSMutableDictionary dictionaryWithObjectsAndKeys:data, @"data", index, @"NSIndex", nil];
+             [delegate performSelectorOnMainThread:@selector(connectionDidFinishLoading:) withObject:res waitUntilDone:[NSThread isMainThread]];
+         }else if ([data length] == 0 && error == nil){
+             //[delegate emptyReply];
+         }else if (error != nil && error.code == NSURLErrorTimedOut){
+             //[delegate timedOut];
+             NSLog(@"%@",@"timeout");
+         }else if (error != nil){
+             //[delegate downloadError:error];
+         }
+     }];
 }
 
 @end
 
 @implementation MIRequestManager (appAPI)
 
-- (MIRequest *) buildMyAPI: (NSString *)domain {
-    MIRequest *request = [[MIRequest alloc] init];
-    request.delegate = self;
-    request.useCache = self.useCache;
-    request.url = @"http://whois.zunmi.com/mobile.php";
-    request.headers = [NSDictionary dictionaryWithObjectsAndKeys:@"pasent.com", @"Referer", @"1.0", @"APIVersion", @"gzip,deflate", @"Accept-Encoding", nil];
-    request.getParams = [NSDictionary dictionaryWithObjectsAndKeys:domain, @"d", nil];
-    request.postStrings = [NSDictionary dictionaryWithObjectsAndKeys:domain, @"domain", nil];
-    request.method = @"POST";
-    return request;
-    //[request asyncRequest];
-}
 
-- (void) whoisAPI: (NSString *)domain {
-    self.json = NO;
-    MIRequest *request = [self buildMyAPI:domain];
-    if (self.useCache && [self checkCache:request.url]) {
-        [self cacheResponse:request.url withIndex:[NSNumber numberWithInt:0]];
-    }else {
-        [self addOperation:request];
-    }
+- (void) whoisAPI:(NSString *) url withIndex: (NSString *)index withDelegate: (NSObject <MIRequestDelegate> *) delegate{
+    self.url = @"http://whois.zunmi.com/mobile.php";
+    self.method = @"GET";
+    
+    self.headers = [NSMutableDictionary dictionaryWithObjectsAndKeys:@"1.0", @"APIVersion", @"gzip,deflate", @"Accept-Encoding", nil];
+    self.getParams = [NSMutableDictionary dictionaryWithObjectsAndKeys:index, @"d", nil];
+    self.postStrings = [NSMutableDictionary dictionaryWithObjectsAndKeys:index, @"domain", nil];
+    self.timeout = 20.0;
+
+    NSMutableURLRequest *request = [self buildRequest];
+    [MIRequest sendAsynchronousRequest:request queue:self completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         NSLog(@"%@",index);
+         //NSMutableArray *res = [NSMutableArray arrayWithArray: [data JSONValue]];
+         if ([data length] > 0 && error == nil){
+             if ([delegate respondsToSelector:@selector(refreshView:)]) {
+                 NSMutableDictionary *res = [NSMutableDictionary dictionaryWithObjectsAndKeys:data, @"data", index, @"NSIndex", nil];
+                 [delegate performSelectorOnMainThread:@selector(connectionDidFinishLoading:) withObject:res waitUntilDone:[NSThread isMainThread]];
+             }
+         }else if ([data length] == 0 && error == nil){
+             //[delegate emptyReply];
+         }else if (error != nil && error.code == NSURLErrorTimedOut){
+             //[delegate timedOut];
+             NSLog(@"%@",@"timeout");
+         }else if (error != nil){
+             //[delegate downloadError:error];
+         }
+     }];
 }
 
 @end

@@ -11,14 +11,11 @@
 
 @interface MIRequestManager (sampleAPI)
 
-- (MIRequest *) buildSampleAPI;
-- (void) sampleAPI;
-- (void) imageLoader:(NSString *) imageURL withIndex: (NSNumber *)index;
+- (void) sampleAPI:(NSString *) url withIndex: (NSString *)index withDelegate: (NSObject <MIRequestDelegate> *) delegate;
 
 @end
 
 @interface MIRequestManager (appAPI)
-- (MIRequest *) buildMyAPI: (NSString *)domain;
-- (void) whoisAPI: (NSString *)domain;
+- (void) whoisAPI:(NSString *) url withIndex: (NSString *)index withDelegate: (NSObject <MIRequestDelegate> *) delegate;
 
 @end

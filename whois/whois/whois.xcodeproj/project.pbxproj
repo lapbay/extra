@@ -36,6 +36,7 @@
 		F17E423414F4F50E004E6C2D /* defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = F17E423314F4F50E004E6C2D /* defaults.plist */; };
 		F19BFA0415020819009C2B2C /* MICache.m in Sources */ = {isa = PBXBuildFile; fileRef = F19BFA0315020819009C2B2C /* MICache.m */; };
 		F19EE74F150113CC00B3C9AA /* libz.1.2.5.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = F19EE74E150113CC00B3C9AA /* libz.1.2.5.dylib */; };
+		F1A918591505EF3A00FD9431 /* MIURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = F1A918581505EF3A00FD9431 /* MIURLConnection.m */; };
 		F1AC25E014FA69CA002CD8DD /* libMobClickLibrary.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F1AC25DE14FA69CA002CD8DD /* libMobClickLibrary.a */; };
 		F1AC25EC14FB69D5002CD8DD /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = F1AC25EB14FB69D4002CD8DD /* MBProgressHUD.m */; };
 		F1AC25EF14FB7ED3002CD8DD /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = F1AC25EE14FB7ED3002CD8DD /* Default.png */; };
@@ -103,6 +104,8 @@
 		F19BFA0215020819009C2B2C /* MICache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MICache.h; sourceTree = "<group>"; };
 		F19BFA0315020819009C2B2C /* MICache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MICache.m; sourceTree = "<group>"; };
 		F19EE74E150113CC00B3C9AA /* libz.1.2.5.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.2.5.dylib; path = usr/lib/libz.1.2.5.dylib; sourceTree = SDKROOT; };
+		F1A918571505EF3A00FD9431 /* MIURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIURLConnection.h; sourceTree = "<group>"; };
+		F1A918581505EF3A00FD9431 /* MIURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIURLConnection.m; sourceTree = "<group>"; };
 		F1AC25DE14FA69CA002CD8DD /* libMobClickLibrary.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libMobClickLibrary.a; sourceTree = "<group>"; };
 		F1AC25DF14FA69CA002CD8DD /* MobClick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MobClick.h; sourceTree = "<group>"; };
 		F1AC25EA14FB69D4002CD8DD /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
@@ -138,6 +141,8 @@
 		F143EBA11500966500CEBC69 /* MIHttpRequest */ = {
 			isa = PBXGroup;
 			children = (
+				F1A918571505EF3A00FD9431 /* MIURLConnection.h */,
+				F1A918581505EF3A00FD9431 /* MIURLConnection.m */,
 				F19BFA0215020819009C2B2C /* MICache.h */,
 				F19BFA0315020819009C2B2C /* MICache.m */,
 				F143EBA21500966500CEBC69 /* MIRequest.h */,
@@ -382,6 +387,7 @@
 				F143EBD41500991900CEBC69 /* SBJsonUTF8Stream.m in Sources */,
 				F143EBD51500991900CEBC69 /* SBJsonWriter.m in Sources */,
 				F19BFA0415020819009C2B2C /* MICache.m in Sources */,
+				F1A918591505EF3A00FD9431 /* MIURLConnection.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -11,7 +11,7 @@
 #import "dataSharer.h"
 #import "MobClick.h"
 
-@interface WIMainViewController : UIViewController <UISearchBarDelegate, MBProgressHUDDelegate, MIRequestManagerDelegate,UIAlertViewDelegate>
+@interface WIMainViewController : UIViewController <MIRequestDelegate, UISearchBarDelegate, MBProgressHUDDelegate,UIAlertViewDelegate>
 
 //@property (retain, nonatomic) UIImageView *imageView;
 @property (retain, nonatomic) UISearchBar *searchBar;

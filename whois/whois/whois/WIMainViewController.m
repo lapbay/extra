@@ -129,10 +129,9 @@
     [self.hud show:YES];
     if (![self.searchBar.text isEqualToString:@""]) {
         MIRequestManager *requestManager = [MIRequestManager requestManager];
-        requestManager.delegate = self;
         //NSString *imageURL = @"http://local.pasent.com/images/milan/5f3b7dbf3ebfc364a8dd5d6092639622.jpg";
         //[requestManager imageLoader:imageURL withIndex:[NSNumber numberWithInt:1234]];
-        [requestManager whoisAPI:self.searchBar.text];
+        [requestManager whoisAPI:@"http://whois.zunmi.com/mobile.php" withIndex:self.searchBar.text withDelegate:self];
         [MobClick event:@"domain" label:[self.searchBar.text lowercaseString]];
     }
     /*NSMutableDictionary *result = [api searchDomain:toSearch];
@@ -202,7 +201,7 @@
     [self.hud hide:YES];
 }
 
-- (void)connectionDidFinishLoading:(NSMutableDictionary *) response withIndex: (NSNumber *) index{
+- (void)connectionDidFinishLoading:(NSMutableDictionary *) response{
     [self performSelectorOnMainThread:@selector(refreshView:) withObject:[response objectForKey:@"data"] waitUntilDone:[NSThread isMainThread]];
 }
 
